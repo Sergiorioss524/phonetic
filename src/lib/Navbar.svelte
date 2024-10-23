@@ -47,7 +47,7 @@
         : 'flex'}"
 		>
 			<!--			<a href="#" class="hidden lg:block lg:text-sm lg:font-semibold lg:leading-6 lg:text-base-content">Log in</a>-->
-			<a href="/#" class="btn btn-primary btn-sm rounded-md ">Pruebalo ahora</a>
+			<a href="/transcription" class="btn btn-primary btn-sm rounded-md ">Pruebalo ahora</a>
 			<a href="/#" class="w-fit h-fit p-0 border-b-0 no-underline text-sm leading-5 below-sm:text-xs below-sm:leading-[1.125rem]">
 				<button class="font-medium py-1.5 px-3  bg-transparent hover:bg-base-300 hover:rounded-md flex items-center">
 					Sign In
