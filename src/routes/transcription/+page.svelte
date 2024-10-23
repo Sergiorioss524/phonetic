@@ -1,5 +1,5 @@
 <script>
-	import { faArrows, faXmark, faFileText,faUpload, faFileExport, faSort } from '@fortawesome/free-solid-svg-icons';
+	import {faUpload, faFileExport, faSort } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 </script>
 
