@@ -4,7 +4,7 @@
 	import { page } from '$app/stores';
 	import PageLogo from '$lib/components/PageLogo.svelte';
 	import Fa from 'svelte-fa';
-	import {faTimes} from '@fortawesome/free-solid-svg-icons';
+	import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 	import {faXmark} from '@fortawesome/free-solid-svg-icons';
 
 	// Access the pathname
@@ -37,19 +37,17 @@
 		</div>
 		<div class="hidden lg:flex lg:gap-x-12">
 			{#each navigation as item (item.name)}
-				<a href={item.href} class="text-sm font-semibold leading-6">{item.name}</a
-				>
+				<a href={item.href} class="text-sm font-semibold leading-6">{item.name}</a>
 			{/each}
 		</div>
 		<div
 			class="flex-1 items-center justify-end gap-x-6 {!showConvertButton
         ? 'hidden sm:flex'
-        : 'flex'}"
+        : 'flex'} hidden lg:flex"
 		>
-			<!--			<a href="#" class="hidden lg:block lg:text-sm lg:font-semibold lg:leading-6 lg:text-base-content">Log in</a>-->
-			<a href="/transcription" class="btn btn-primary btn-sm rounded-md ">Pruebalo ahora</a>
+			<a href="/transcription" class="btn btn-primary btn-sm rounded-md">Pruebalo ahora</a>
 			<a href="/#" class="w-fit h-fit p-0 border-b-0 no-underline text-sm leading-5 below-sm:text-xs below-sm:leading-[1.125rem]">
-				<button class="font-medium py-1.5 px-3  bg-transparent hover:bg-base-300 hover:rounded-md flex items-center">
+				<button class="font-medium py-1.5 px-3 bg-transparent hover:bg-base-300 hover:rounded-md flex items-center">
 					Sign In
 					<svg class="ml-1 w-2.5 h-2.5" viewBox="0 0 24 24" stroke-width="3" fill="none" xmlns="http://www.w3.org/2000/svg" color="currentColor">
 						<path d="M3 12L21 12M21 12L12.5 3.5M21 12L12.5 20.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -64,13 +62,12 @@
 				on:click={openMobileMenu}
 			>
 				<span class="sr-only">Open main menu</span>
-				<Fa icon={faTimes} class="h-6 w-6" />
+				<Fa icon={faBars} class="h-6 w-6" />
 			</button>
 		</div>
 	</nav>
 
 	<Dialog on:close={closeMobileMenu} bind:open={$mobileMenuOpen} class="fixed inset-0 z-50">
-		<!--			<div class="fixed inset-0 z-10"></div>-->
 		<div
 			class="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-base-200 p-3 sm:max-w-sm sm:ring-1 sm:ring-base-content/10"
 		>
@@ -92,18 +89,12 @@
 							<a
 								href={item.href}
 								class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-base-content hover:bg-gray-50"
-							>{item.name}</a
-							>
+							>{item.name}</a>
 						{/each}
 					</div>
 					<hr class="my-5 border border-gray-600" />
-					<a href="/#" class="btn btn-primary btn-sm btn-block">Pruebalo ahora</a>
-					<a href="/#" class="btn btn-accent btn-sm btn-block mt-2">login</a>
-
-
-					<!--						<div class="py-6">-->
-					<!--							<a href="/convert" class="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Convert Code</a>-->
-					<!--						</div>-->
+					<a href="/#" class="btn btn-primary btn-sm btn-block lg:hidden">Pruebalo ahora</a>
+					<a href="/#" class="btn btn-accent btn-sm btn-block mt-2 lg:hidden">login</a>
 				</div>
 			</div>
 		</div>
