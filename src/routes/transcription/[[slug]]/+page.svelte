@@ -133,9 +133,11 @@
 				<div class="flex space-x-2 justify-between sm:justify-start">
 					<!-- Transcriptions Button -->
 					<div>
+						<a href="/AddTranscription">
 						<button class="btn btn-primary flex items-center text-black font-semibold py-4 px-8 rounded-full sm:w-auto">
 							Transcriptions
 						</button>
+						</a>
 					</div>
 				</div>
 			</div>
