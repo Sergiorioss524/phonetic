@@ -4,7 +4,7 @@
 	import { page } from '$app/stores';
 	import PageLogo from '$lib/components/PageLogo.svelte';
 	import Fa from 'svelte-fa';
-	import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
+	import { faBars,} from '@fortawesome/free-solid-svg-icons';
 	import {faXmark} from '@fortawesome/free-solid-svg-icons';
 
 	// Access the pathname

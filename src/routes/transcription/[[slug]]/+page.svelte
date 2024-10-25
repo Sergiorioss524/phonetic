@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { faUpload, faSort } from '@fortawesome/free-solid-svg-icons';
+	import {faSort } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import { writable } from 'svelte/store';
 	import Teamtranscript from '../Teamtranscript.svelte';

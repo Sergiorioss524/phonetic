@@ -48,7 +48,7 @@
 			Nuestra plataforma SaaS utiliza IA avanzada para transcribir conversaciones médicas y empresariales, devolviéndolas en formato conversacional preciso y natural.
 		</p>
 		<div class="mt-6">
-			<a href="/#" class="btn btn-primary btn-wide rounded-md text-semibold text-lg">Empieza Gratis</a>
+			<a href="/transcription" class="btn btn-primary btn-wide rounded-md text-semibold text-lg">Empieza Gratis</a>
 		</div>
 	</div>
 </section>

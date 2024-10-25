@@ -35,11 +35,13 @@
 		</div>
 
 		<div class="mb-4 sm:mb-6">
+			<a href="/Viewtranscription">
 			<button
 				class="w-full py-3 px-4 btn btn-secondary text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
 			>
 				Carga y transcribe
 			</button>
+			</a>
 		</div>
 
 		<div class="mt-4 sm:mt-6">
