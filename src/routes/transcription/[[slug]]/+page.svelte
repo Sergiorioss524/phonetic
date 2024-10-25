@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { faUpload,faSort } from '@fortawesome/free-solid-svg-icons';
+	import { faUpload, faSort } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import { writable } from 'svelte/store';
 	import Teamtranscript from '../Teamtranscript.svelte';
@@ -21,7 +21,8 @@
 	// Store for sort order
 	const sortOrder = writable<string>('alphabetical');
 
-	// Function to handle file upload
+	// Function to handle file upload (commented out)
+	/*
 	function handleFileUpload(event: Event) {
 		const input = event.target as HTMLInputElement;
 		if (input.files && input.files.length > 0) {
@@ -42,6 +43,7 @@
 			};
 		}
 	}
+	*/
 
 	// Helper function to format duration in mm:ss format
 	function formatDuration(seconds: number): string {
@@ -103,8 +105,8 @@
 			<div class="flex flex-col sm:flex-row isolate space-y-4 sm:space-y-0">
 				<!-- Dropdown Button -->
 				<div class="sm:mr-2 relative inline-flex items-center z-[200]">
-					<div class="dropdown dropdown-hover z-[200]">
-						<div tabindex="0" role="button" class="btn rounded-full m-1 font-semibold py-2 px-4 w-full sm:w-auto">
+					<div class="dropdown dropdown-right z-[200]">
+						<div tabindex="0" role="button" class="btn btn-secondary rounded-full m-1 font-semibold py-2 px-4 w-full sm:w-auto">
 							<Fa icon={faSort} class="h-6 w-6 mr-1" /> Select Order
 						</div>
 						<ul class="dropdown-content menu bg-base-100 rounded-box z-[300] w-52 p-2 shadow">
@@ -114,7 +116,7 @@
 					</div>
 				</div>
 
-				<!-- Search Input -->
+				<!-- Search Input (Ensuring visibility and proper styling) -->
 				<div class="flex items-center bg-white py-2 px-4 rounded-[24px] w-full sm:w-auto">
           <span aria-hidden="true" class="inline-flex items-center justify-center" role="img">
             <svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24">
@@ -129,21 +131,12 @@
 
 				<!-- Right Section Buttons -->
 				<div class="flex space-x-2 justify-between sm:justify-start">
-					<!-- Upload File Button -->
+					<!-- Transcriptions Button -->
 					<div>
-						<label class="btn btn-wide btn-secondary flex items-center text-white font-semibold py-2 px-4 rounded-full sm:w-auto cursor-pointer">
-							<span class="text-black text-md font-bold">Upload File</span>
-							<Fa icon={faUpload} class="h-6 w-6 text-black"/>
-							<input type="file" accept="audio/*" class="hidden" on:change={handleFileUpload} />
-						</label>
+						<button class="btn btn-primary flex items-center text-black font-semibold py-4 px-8 rounded-full sm:w-auto">
+							Transcriptions
+						</button>
 					</div>
-
-					<!-- Conditional Buttons -->
-					{#if showViewTranscription}
-						<button class="btn btn-accent ml-4 rounded-full">View Transcription</button>
-					{:else if showTranscript}
-						<button class="btn btn-accent ml-4 rounded-full">Transcript</button>
-					{/if}
 				</div>
 			</div>
 
@@ -226,11 +219,8 @@
 
 <section class="mt-24">
 	<!-- Stylish Heading -->
-	<h2 class="text-4xl font-bold text-gray-800 mb-12 text-left ml-24 ">
+	<h2 class="text-4xl font-bold text-gray-800 mb-12 text-left ml-24">
 		Transcripciones del equipo
 	</h2>
-
-	<!-- Imported Teamtranscript Component -->
 	<Teamtranscript />
 </section>
-
