@@ -43,12 +43,5 @@
 			</button>
 			</a>
 		</div>
-
-		<div class="mt-4 sm:mt-6">
-			<h2 class="text-md sm:text-lg font-medium text-gray-800">Segmentos cargados</h2>
-			<div class="bg-gray-100 p-3 sm:p-4 rounded-lg mt-3 sm:mt-4 text-gray-600">
-				No hay segmentos cargados
-			</div>
-		</div>
 	</div>
 </section>

@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { writable } from 'svelte/store';
+	import { faEye, faUndo, faCut, faCompressArrowsAlt } from '@fortawesome/free-solid-svg-icons';
+	import Fa from 'svelte-fa';
 
-	// Define initial data for transcriptions
 	interface Transcription {
 		speaker: string;
 		text: string;
@@ -21,7 +22,20 @@
 	// Function to handle actions (like Revisar, Revertir, Dividir, Combinar)
 	function handleAction(action: string, index: number) {
 		console.log(`${action} clicked on item ${index}`);
-		// Add your logic here for each action
+	}
+
+	// Function to handle speaker changes
+	function changeSpeaker(index: number, value: string) {
+		transcriptionStore.update((transcriptions) => {
+			transcriptions[index].speaker = value;
+			return transcriptions;
+		});
+	}
+
+	// Handler function to process the change event with type casting
+	function handleSelectChange(index: number, event: Event) {
+		const target = event.target as HTMLSelectElement;
+		changeSpeaker(index, target.value);
 	}
 </script>
 
@@ -40,8 +54,8 @@
 		<!-- Interlocutors Section -->
 		<div class="mb-8">
 			<h2 class="text-xl font-medium text-gray-800">Interlocutores</h2>
-			<p class="text-sm text-gray-600">Interlocutor SPEAKER_00: <strong>SPEAKER_00</strong></p>
-			<p class="text-sm text-gray-600">Interlocutor SPEAKER_01: <strong>SPEAKER_01</strong></p>
+			<p class="text-sm text-gray-600">Interlocutor SPEAKER_00: <strong>Carlos</strong></p>
+			<p class="text-sm text-gray-600">Interlocutor SPEAKER_01: <strong>Maria</strong></p>
 		</div>
 
 		<!-- Transcription Table -->
@@ -49,16 +63,22 @@
 			<table class="min-w-full table-auto">
 				<thead class="bg-gray-50">
 				<tr>
-					<th class="px-6 py-3 text-left text-gray-600 font-medium">Interlocutor</th>
-					<th class="px-6 py-3 text-left text-gray-600 font-medium">Transcripción</th>
-					<th class="px-6 py-3 text-left text-gray-600 font-medium">Acciones</th>
+					<th class="px-4 py-3 text-left text-gray-600 font-medium w-1/6">Interlocutor</th>
+					<th class="px-4 py-3 text-left text-gray-600 font-medium w-4/6">Transcripción</th>
+					<th class="px-2 py-3 text-left text-gray-600 font-medium w-1/6">Acciones</th>
 				</tr>
 				</thead>
 				<tbody class="bg-white divide-y divide-gray-200">
 				{#each $transcriptionStore as { speaker, text, audioUrl }, index}
 					<tr class="hover:bg-gray-50">
-						<td class="px-6 py-4 text-sm font-medium text-gray-800">{speaker}</td>
-						<td class="px-6 py-4">
+						<td class="px-4 py-4 text-sm font-medium text-gray-800">
+							<!-- Dropdown to select speaker -->
+							<select on:change={(e) => handleSelectChange(index, e)} class="border rounded-lg px-2 py-1">
+								<option value="SPEAKER_00" selected={speaker === 'SPEAKER_00'}>Carlos</option>
+								<option value="SPEAKER_01" selected={speaker === 'SPEAKER_01'}>Maria</option>
+							</select>
+						</td>
+						<td class="px-4 py-4">
 							<div class="flex items-center space-x-3">
 								<audio controls src={audioUrl} class="w-40 h-10"></audio>
 								<input
@@ -68,31 +88,47 @@
 								/>
 							</div>
 						</td>
-						<td class="px-6 py-4">
-							<div class="flex space-x-2">
+						<td class="px-7 py-4">
+							<div class="flex space-x-2 justify-center">
+								<!-- Icon Buttons with Tooltips -->
 								<button
-									class="btn btn-sm btn-primary"
+									class="btn btn-sm btn-primary relative group"
 									on:click={() => handleAction('Revisar', index)}
 								>
-									Revisar
+									<Fa icon={faEye} class="h-5 w-5" />
+									<span class="absolute left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
+                      Revisar
+                    </span>
 								</button>
+
 								<button
-									class="btn btn-sm btn-secondary"
+									class="btn btn-sm btn-secondary relative group"
 									on:click={() => handleAction('Revertir', index)}
 								>
-									Revertir
+									<Fa icon={faUndo} class="h-5 w-5" />
+									<span class="absolute left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
+                      Revertir
+                    </span>
 								</button>
+
 								<button
-									class="btn btn-sm btn-warning"
+									class="btn btn-sm btn-warning relative group"
 									on:click={() => handleAction('Dividir', index)}
 								>
-									Dividir
+									<Fa icon={faCut} class="h-5 w-5" />
+									<span class="absolute left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
+                      Dividir
+                    </span>
 								</button>
+
 								<button
-									class="btn btn-sm btn-success"
+									class="btn btn-sm btn-success relative group"
 									on:click={() => handleAction('Combinar', index)}
 								>
-									Combinar
+									<Fa icon={faCompressArrowsAlt} class="h-5 w-5" />
+									<span class="absolute left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
+                      Combinar
+                    </span>
 								</button>
 							</div>
 						</td>
