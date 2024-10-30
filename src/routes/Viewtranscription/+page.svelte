@@ -2,6 +2,7 @@
 	import { writable } from 'svelte/store';
 	import { faEye, faUndo, faCut, faCompressArrowsAlt, faTrashAlt, faCheck } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
+	import { faUserEdit, faDownload, faEdit, faFileAlt, faObjectGroup } from '@fortawesome/free-solid-svg-icons';
 
 	interface Transcription {
 		speaker: string;
@@ -14,8 +15,8 @@
 
 	// Mock transcription data
 	let transcriptions: Transcription[] = [
-		{ speaker: 'SPEAKER_00', text: 'Transcription text here...', audioUrl: '#', duration: '00:00', selected: false, revised:false },
-		{ speaker: 'SPEAKER_01', text: 'Another transcription text...', audioUrl: '#', duration: '00:00', selected: false, revised:false },
+		{ speaker: 'SPEAKER_00', text: 'Transcription text here...', audioUrl: '#', duration: '00:00', selected: false, revised: false },
+		{ speaker: 'SPEAKER_01', text: 'Another transcription text...', audioUrl: '#', duration: '00:00', selected: false, revised: false },
 	];
 
 	// Writable store for managing transcription data
@@ -31,6 +32,24 @@
 
 	// Variable to control modal visibility
 	let showRenameModal = false;
+
+	// Variable to control the visibility of the combine modal
+	let showCombineModal = false;
+
+	// Array to store the segments selected for combining
+	let segmentsToCombine = [];
+
+	// Variable to control the visibility of the divide modal
+	let showDivideModal = false;
+
+	// Variable to store the segment to be divided
+	let segmentToDivide = null;
+
+	// Temporary variable to hold the text being edited for division
+	let divideText = '';
+
+	// Variable to hold the selected speaker for the new segment
+	let selectedSpeakerForDivide = '';
 
 	// Function to open the rename modal
 	function openRenameModal() {
@@ -52,6 +71,63 @@
 		closeRenameModal();
 	}
 
+	// Function to open the combine modal
+	function openCombineModal() {
+		// Get the selected segments
+		segmentsToCombine = $transcriptionStore.filter(segment => segment.selected);
+
+		// Check if at least two segments are selected
+		if (segmentsToCombine.length >= 2) {
+			showCombineModal = true;
+		} else {
+			// Optionally, show an alert or notification
+			alert('Seleccione al menos dos segmentos para combinar.');
+		}
+	}
+
+	// Function to close the combine modal
+	function closeCombineModal() {
+		showCombineModal = false;
+	}
+
+	// Function to combine segments
+	function combineSegments() {
+		// Combine texts of the selected segments
+		const combinedText = segmentsToCombine.map(segment => segment.text).join(' ');
+
+		// Use the speaker of the first selected segment
+		const speaker = segmentsToCombine[0].speaker;
+
+		// Create a new combined segment
+		const newSegment: Transcription = {
+			speaker,
+			text: combinedText,
+			audioUrl: '#',
+			duration: '00:00',
+			selected: false,
+			revised: false,
+		};
+
+		transcriptionStore.update(transcriptions => {
+			// Remove selected segments
+			transcriptions = transcriptions.filter(segment => !segment.selected);
+
+			// Find the index to insert the new segment
+			const firstSelectedIndex = $transcriptionStore.findIndex(segment => segment === segmentsToCombine[0]);
+
+			transcriptions.splice(firstSelectedIndex, 0, newSegment);
+
+			// Reset selection
+			transcriptions.forEach(segment => segment.selected = false);
+
+			return transcriptions;
+		});
+
+		// Reset selections and close modal
+		segmentsToCombine = [];
+		showCombineModal = false;
+	}
+
 	// Function to handle actions (like Revisar, Revertir, Dividir, Combinar)
 	function handleAction(action: string, index: number) {
 		if (action === 'Revisar') {
@@ -59,9 +135,36 @@
 				transcriptions[index].revised = !transcriptions[index].revised;
 				return transcriptions;
 			});
+		} else if (action === 'Dividir') {
+			// Open the divide modal
+			segmentToDivide = $transcriptionStore[index];
+			divideText = segmentToDivide.text; // Initialize with the segment's text
+			selectedSpeakerForDivide = segmentToDivide.speaker; // Initialize with current speaker
+			showDivideModal = true;
 		} else {
 			console.log(`${action} clicked on item ${index}`);
 		}
+	}
+
+	// Function to close the divide modal
+	function closeDivideModal() {
+		showDivideModal = false;
+		segmentToDivide = null;
+		divideText = '';
+		selectedSpeakerForDivide = '';
+	}
+
+	// Function to handle division (functionality to be added later)
+	function divideSegment() {
+		// Placeholder for division logic
+		console.log('Divide segment at specified point');
+		closeDivideModal();
+	}
+
+	// Function to handle speaker changes in dropdown in divide modal
+	function handleSpeakerChangeForDivide(event: Event) {
+		const target = event.target as HTMLSelectElement;
+		selectedSpeakerForDivide = target.value;
 	}
 
 	// Function to handle speaker changes in dropdown
@@ -103,37 +206,41 @@
 		<h1 class="text-4xl font-bold text-gray-800 mb-6">Transcripción Completa</h1>
 		<div class="flex justify-between mb-6">
 			<!-- Main Buttons -->
-			<div class="space-x-4">
-				<button class="btn btn-primary px-8 py-3 rounded-md" on:click={openRenameModal}>Renombrar interlocutores</button>
-				<button class="btn btn-secondary px-8 py-3 rounded-md">Descargar Audio</button>
-				<button class="btn btn-secondary px-8 py-3 rounded-md">Renombrar transcripción</button>
-				<button class="btn btn-secondary px-8 py-3 rounded-md">Descargar Transcripción</button>
+			<div class="flex flex-wrap gap-2">
+				<button class="btn btn-secondary flex items-center px-4 py-2 rounded-md text-sm" on:click={openRenameModal}>
+					<Fa icon={faUserEdit} class="mr-2 h-4 w-4" />
+					Renombrar interlocutores
+				</button>
+				<button class="btn btn-secondary flex items-center px-4 py-2 rounded-md text-sm">
+					<Fa icon={faDownload} class="mr-2 h-4 w-4" />
+					Descargar Audio
+				</button>
+				<button class="btn btn-secondary flex items-center px-4 py-2 rounded-md text-sm">
+					<Fa icon={faEdit} class="mr-2 h-4 w-4" />
+					Renombrar transcripción
+				</button>
+				<button class="btn btn-secondary flex items-center px-4 py-2 rounded-md text-sm">
+					<Fa icon={faFileAlt} class="mr-2 h-4 w-4" />
+					Descargar Transcripción
+				</button>
 				{#if hasTwoOrMoreSelected}
-					<button class="btn btn-secondary px-8 py-3 rounded-md">Combinar segmentos seleccionados</button>
+					<button class="btn btn-secondary flex items-center px-4 py-2 rounded-md text-sm" on:click={openCombineModal}>
+						<Fa icon={faObjectGroup} class="mr-2 h-4 w-4" />
+						Combinar segmentos seleccionados
+					</button>
 				{/if}
 			</div>
 		</div>
 
-		<!-- Interlocutors Section -->
-		<div class="mb-8">
-			<h2 class="text-xl font-medium text-gray-800">Interlocutores</h2>
-			<div class="flex items-center space-x-2 mb-2">
-				<p class="text-sm text-gray-600">Interlocutor SPEAKER_00:</p>
-				<p class="text-gray-800 font-semibold">{$speakerName1}</p>
-			</div>
-			<div class="flex items-center space-x-2">
-				<p class="text-sm text-gray-600">Interlocutor SPEAKER_01:</p>
-				<p class="text-gray-800 font-semibold">{$speakerName2}</p>
-			</div>
-		</div>
+
 
 		<!-- Transcription Table -->
 		<div class="overflow-x-auto border border-gray-200 rounded-lg">
 			<table class="min-w-full table-auto">
 				<thead class="bg-gray-50">
 				<tr>
-					<th class="px-4 py-3 text-left text-gray-600 font-medium w-1/6">Interlocutor</th>
-					<th class="px-4 py-3 text-left text-gray-600 font-medium w-4/6">Transcripción</th>
+					<th class="px-4 py-3 text-left text-gray-600 font-medium w-1/8">Interlocutor</th>
+					<th class="px-4 py-3 text-left text-gray-600 font-medium w-5/6">Transcripción</th>
 					<th class="px-2 py-3 text-left text-gray-600 font-medium w-1/6">Acciones</th>
 				</tr>
 				</thead>
@@ -172,40 +279,42 @@
 						<td class="px-7 py-4">
 							<div class="flex space-x-2 justify-center">
 								<!-- Tooltip-enabled buttons -->
-								<!-- Inside the #each loop, replace the existing "Revisar" button with this code -->
 								<button
 									class="btn btn-sm relative group {segment.revised ? 'btn-success' : 'btn-primary'}"
 									on:click={() => handleAction('Revisar', index)}
 								>
 									<Fa icon={segment.revised ? faCheck : faEye} class="h-5 w-5" />
 									<span class="absolute left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
-    {segment.revised ? 'Marcar para revisar' : 'Validar transcripcion'}
-  </span>
+                                        {segment.revised ? 'Marcar para revisar' : 'Validar transcripcion'}
+                                    </span>
 								</button>
 
 								<button class="btn btn-sm btn-secondary relative group" on:click={() => handleAction('Revertir', index)}>
 									<Fa icon={faUndo} class="h-5 w-5" />
 									<span class="absolute left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
-                      Revertir
-                    </span>
+                                        Revertir
+                                    </span>
 								</button>
+
 								<button class="btn btn-sm btn-warning relative group" on:click={() => handleAction('Dividir', index)}>
 									<Fa icon={faCut} class="h-5 w-5" />
 									<span class="absolute left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
-                      Dividir
-                    </span>
+                                        Dividir
+                                    </span>
 								</button>
-								<button class="btn btn-sm btn-success relative group" on:click={() => toggleSegmentSelection(index)}>
+
+								<button class="btn btn-sm relative group {segment.selected ? 'btn-success' : 'btn-secondary'}" on:click={() => toggleSegmentSelection(index)}>
 									<Fa icon={faCompressArrowsAlt} class="h-5 w-5" />
 									<span class="absolute left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
-                      Combinar
-                    </span>
+                                        {segment.selected ? 'Deseleccionar' : 'Seleccionar'}
+                                    </span>
 								</button>
+
 								<button class="btn btn-sm btn-danger relative group" on:click={() => handleAction('Eliminar', index)}>
 									<Fa icon={faTrashAlt} class="h-5 w-5" />
 									<span class="absolute left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
-                      Eliminar
-                    </span>
+                                        Eliminar
+                                    </span>
 								</button>
 							</div>
 						</td>
@@ -215,7 +324,7 @@
 			</table>
 		</div>
 
-
+		<!-- Rename Interlocutors Modal -->
 		{#if showRenameModal}
 			<div class="fixed inset-0 flex items-center justify-center z-50">
 				<div class="absolute inset-0 bg-black opacity-50"></div>
@@ -250,7 +359,7 @@
 					<div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
 						<button
 							type="button"
-							class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"
+							class="btn btn-secondary w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"
 							on:click={saveSpeakerNames}
 						>
 							Guardar
@@ -266,5 +375,108 @@
 				</div>
 			</div>
 		{/if}
+
+		<!-- Combine Segments Modal -->
+		{#if showCombineModal}
+			<div class="fixed inset-0 flex items-center justify-center z-50">
+				<div class="absolute inset-0 bg-black opacity-50"></div>
+				<div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full z-50">
+					<div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+						<h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Combinar Segmentos Seleccionados</h3>
+						<!-- Display the selected segments -->
+						{#each segmentsToCombine as segment}
+							<div class="mb-4">
+								<p class="text-sm text-gray-600">
+									<strong>Interlocutor:</strong> {segment.speaker === 'SPEAKER_00' ? $speakerName1 : $speakerName2}
+								</p>
+								<p class="text-gray-800">{segment.text}</p>
+							</div>
+						{/each}
+					</div>
+					<div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+						<button
+							type="button"
+							class="btn btn-secondary w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-black hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
+							on:click={combineSegments}
+						>
+							Combinar
+						</button>
+						<button
+							type="button"
+							class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+							on:click={closeCombineModal}
+						>
+							Cerrar
+						</button>
+					</div>
+				</div>
+			</div>
+		{/if}
+
+		<!-- Divide Segment Modal -->
+		{#if showDivideModal}
+			<div class="fixed inset-0 flex items-center justify-center z-50">
+				<div class="absolute inset-0 bg-black opacity-50"></div>
+				<div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full z-50">
+					<div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+						<h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Dividir Segmento</h3>
+						<!-- Display the segment to be divided -->
+						{#if segmentToDivide}
+							<div class="mb-4">
+								<p class="text-sm text-gray-600">
+									<strong>Interlocutor:</strong> {segmentToDivide.speaker === 'SPEAKER_00' ? $speakerName1 : $speakerName2}
+								</p>
+								<!-- Custom Play Button with Duration -->
+								<button
+									class="flex items-center justify-center bg-gray-200 text-black rounded-full px-4 py-2 cursor-pointer mb-4"
+									style="font-family: 'Courier New', monospace; font-size: 1rem;"
+								>
+									<!-- Play Icon and Time Text -->
+									<span class="mr-2 text-gray-600 text-lg">▶</span>
+									<span class="text-black">00:00</span>
+								</button>
+								<!-- Speaker Selection Dropdown -->
+								<div class="mb-4">
+									<label class="block text-gray-700 text-sm font-bold mb-2" for="divideSpeaker">
+										Asignar nuevo segmento a:
+									</label>
+									<select id="divideSpeaker" bind:value={selectedSpeakerForDivide} on:change={handleSpeakerChangeForDivide} class="border rounded-lg px-2 py-1 w-full">
+										<option value="SPEAKER_00">{$speakerName1}</option>
+										<option value="SPEAKER_01">{$speakerName2}</option>
+									</select>
+								</div>
+								<!-- Textarea for editing and specifying where to divide -->
+								<textarea
+									class="w-full px-3 py-2 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
+									bind:value={divideText}
+									rows="5"
+									style="overflow:auto;"
+								></textarea>
+								<p class="text-sm text-gray-600 mt-2">
+									Seleccione el punto donde desea dividir el segmento.
+								</p>
+							</div>
+						{/if}
+					</div>
+					<div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+						<button
+							type="button"
+							class="btn btn-secondary inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-black hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 sm:ml-3 sm:w-auto sm:text-sm"
+							on:click={divideSegment}
+						>
+							Dividir
+						</button>
+						<button
+							type="button"
+							class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+							on:click={closeDivideModal}
+						>
+							Cerrar
+						</button>
+					</div>
+				</div>
+			</div>
+		{/if}
+
 	</div>
 </section>
