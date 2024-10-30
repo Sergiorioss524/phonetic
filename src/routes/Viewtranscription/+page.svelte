@@ -291,7 +291,7 @@
 
 								<button class="btn btn-sm btn-secondary relative group" on:click={() => handleAction('Revertir', index)}>
 									<Fa icon={faUndo} class="h-5 w-5" />
-									<span class="absolute left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
+									<span class="absolute z-50 left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
                                         Revertir
                                     </span>
 								</button>
@@ -305,7 +305,7 @@
 
 								<button class="btn btn-sm relative group {segment.selected ? 'btn-success' : 'btn-secondary'}" on:click={() => toggleSegmentSelection(index)}>
 									<Fa icon={faCompressArrowsAlt} class="h-5 w-5" />
-									<span class="absolute left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
+									<span class="absolute z-50 left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
                                         {segment.selected ? 'Deseleccionar' : 'Seleccionar'}
                                     </span>
 								</button>
@@ -377,33 +377,41 @@
 		{/if}
 
 		<!-- Combine Segments Modal -->
+		<!-- Combine Segments Modal -->
 		{#if showCombineModal}
 			<div class="fixed inset-0 flex items-center justify-center z-50">
+				<!-- Background overlay -->
 				<div class="absolute inset-0 bg-black opacity-50"></div>
-				<div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full z-50">
-					<div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-						<h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Combinar Segmentos Seleccionados</h3>
-						<!-- Display the selected segments -->
+
+				<!-- Modal Content -->
+				<div class="bg-white rounded-lg shadow-xl transform transition-all sm:max-w-lg sm:w-full z-50 p-6">
+					<!-- Modal Title -->
+					<h3 class="text-xl font-bold text-gray-900 mb-6">Combinar Segmentos Seleccionados</h3>
+
+					<!-- Display Selected Segments -->
+					<div class="space-y-4">
 						{#each segmentsToCombine as segment}
-							<div class="mb-4">
-								<p class="text-sm text-gray-600">
+							<div class="p-4 bg-gray-100 rounded-lg">
+								<p class="text-sm text-gray-700">
 									<strong>Interlocutor:</strong> {segment.speaker === 'SPEAKER_00' ? $speakerName1 : $speakerName2}
 								</p>
-								<p class="text-gray-800">{segment.text}</p>
+								<p class="text-gray-800 mt-1">{segment.text}</p>
 							</div>
 						{/each}
 					</div>
-					<div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+
+					<!-- Action buttons -->
+					<div class="mt-8 flex justify-end space-x-4">
 						<button
 							type="button"
-							class="btn btn-secondary w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-black hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
+							class="btn btn-success px-6"
 							on:click={combineSegments}
 						>
 							Combinar
 						</button>
 						<button
 							type="button"
-							class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+							class="btn btn-secondary px-6"
 							on:click={closeCombineModal}
 						>
 							Cerrar
@@ -417,66 +425,79 @@
 		{#if showDivideModal}
 			<div class="fixed inset-0 flex items-center justify-center z-50">
 				<div class="absolute inset-0 bg-black opacity-50"></div>
-				<div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full z-50">
-					<div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-						<h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Dividir Segmento</h3>
-						<!-- Display the segment to be divided -->
-						{#if segmentToDivide}
-							<div class="mb-4">
-								<p class="text-sm text-gray-600">
-									<strong>Interlocutor:</strong> {segmentToDivide.speaker === 'SPEAKER_00' ? $speakerName1 : $speakerName2}
-								</p>
-								<!-- Custom Play Button with Duration -->
-								<button
-									class="flex items-center justify-center bg-gray-200 text-black rounded-full px-4 py-2 cursor-pointer mb-4"
-									style="font-family: 'Courier New', monospace; font-size: 1rem;"
-								>
-									<!-- Play Icon and Time Text -->
-									<span class="mr-2 text-gray-600 text-lg">▶</span>
-									<span class="text-black">00:00</span>
-								</button>
-								<!-- Speaker Selection Dropdown -->
-								<div class="mb-4">
-									<label class="block text-gray-700 text-sm font-bold mb-2" for="divideSpeaker">
-										Asignar nuevo segmento a:
-									</label>
-									<select id="divideSpeaker" bind:value={selectedSpeakerForDivide} on:change={handleSpeakerChangeForDivide} class="border rounded-lg px-2 py-1 w-full">
-										<option value="SPEAKER_00">{$speakerName1}</option>
-										<option value="SPEAKER_01">{$speakerName2}</option>
-									</select>
-								</div>
-								<!-- Textarea for editing and specifying where to divide -->
-								<textarea
-									class="w-full px-3 py-2 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
-									bind:value={divideText}
-									rows="5"
-									style="overflow:auto;"
-								></textarea>
-								<p class="text-sm text-gray-600 mt-2">
-									Seleccione el punto donde desea dividir el segmento.
-								</p>
-							</div>
-						{/if}
+				<div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full z-50 p-6">
+					<!-- Modal Title -->
+					<h3 class="text-xl font-bold text-gray-900 mb-4">Dividir segmento</h3>
+
+					<!-- Custom Audio Player -->
+					<div class="flex items-center bg-gray-400 rounded-full px-4 py-2 w-full max-w-md mb-4">
+						<!-- Play/Pause Button -->
+						<button class="flex items-center justify-center w-8 h-8 bg-gray-600 rounded-full text-white mr-3">
+							<!-- Use SVG icon for play/pause (swap based on playback state) -->
+							<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path d="M5 3.5v17l15-8.5-15-8.5z" /> <!-- Play Icon -->
+								<!-- For pause icon, swap path to: <path d="M6 4h4v16h-4v-16zm8 0h4v16h-4v-16z"/> -->
+							</svg>
+						</button>
+
+						<!-- Current Time Display -->
+						<span class="text-white text-sm mr-3">0:00</span>
+
+						<!-- Progress Bar -->
+						<div class="relative flex-1 h-1 bg-gray-300 rounded-full mr-3">
+							<div class="absolute top-0 left-0 h-full w-1/4 bg-gray-600 rounded-full"></div> <!-- Example Progress -->
+							<div class="absolute top-0 right-0 h-full w-1 bg-white rounded-full"></div> <!-- Handle -->
+						</div>
+
+						<!-- Total Time Display -->
+						<span class="text-white text-sm">0:00</span>
 					</div>
-					<div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+
+					<!-- Split at current time button -->
+					<button class="btn btn-default hover w-full mb-4">Separar en el segundo actual</button>
+
+					<!-- Segments Display -->
+					<div class="space-y-2">
+						<!-- Segment 1 -->
+						<div class="flex items-center justify-between">
+							<span class="text-gray-700 font-medium">Segment 1: 0.00s - 0.89s</span>
+							<select class="select select-bordered w-1/3">
+								<option value="SPEAKER_00">SPEAKER_00</option>
+								<option value="SPEAKER_01">SPEAKER_01</option>
+							</select>
+							<button class="btn btn-error btn-sm">Eliminar</button>
+						</div>
+
+						<!-- Segment 2 -->
+						<div class="flex items-center justify-between">
+							<span class="text-gray-700 font-medium">Segment 2: 0.80s - 0.89s</span>
+							<select class="select select-bordered w-1/3">
+								<option value="SPEAKER_00">SPEAKER_00</option>
+								<option value="SPEAKER_01">SPEAKER_01</option>
+							</select>
+							<button class="btn btn-error btn-sm">Eliminar</button>
+						</div>
+					</div>
+
+					<!-- Action buttons -->
+					<div class="mt-6 flex justify-end space-x-4">
 						<button
 							type="button"
-							class="btn btn-secondary inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-black hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 sm:ml-3 sm:w-auto sm:text-sm"
+							class="btn btn-success"
 							on:click={divideSegment}
 						>
 							Dividir
 						</button>
 						<button
 							type="button"
-							class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+							class="btn btn-secondary"
 							on:click={closeDivideModal}
 						>
-							Cerrar
+							Cancelar
 						</button>
 					</div>
 				</div>
 			</div>
 		{/if}
-
 	</div>
 </section>
