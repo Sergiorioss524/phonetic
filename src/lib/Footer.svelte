@@ -10,7 +10,7 @@
 	};
 </script>
 
-<footer class="m-4 rounded-lg bg-base-300 px-8">
+<footer class="rounded-lg bg-base-300 px-8">
 	<div class="mx-auto w-full max-w-screen-xl p-4 md:py-8">
 		<div class="sm:flex sm:items-center sm:justify-between">
 			<PageLogo />

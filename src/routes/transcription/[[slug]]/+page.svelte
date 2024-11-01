@@ -102,43 +102,40 @@
 <section class="px-10">
 	<div class="body flex-grow-1 px-8 sm:px-8 md:px-16 relative z-[10]">
 		<div class="mt-8 sm:mt-12">
-			<div class="flex flex-col sm:flex-row isolate space-y-4 sm:space-y-0">
+			<div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0">
 				<!-- Dropdown Button -->
-				<div class="sm:mr-2 relative inline-flex items-center z-[200]">
-					<div class="dropdown dropdown-right z-[200]">
-						<div tabindex="0" role="button" class="btn btn-secondary rounded-full m-1 font-semibold py-2 px-4 w-full sm:w-auto">
+				<div class="sm:mr-2 inline-flex items-center">
+					<div class="dropdown dropdown-right">
+						<button tabindex="0"  class="btn btn-secondary rounded-md h-12 font-semibold px-4 w-full sm:w-auto flex items-center">
 							<Fa icon={faSort} class="h-6 w-6 mr-1" /> Select Order
-						</div>
-						<ul class="dropdown-content menu bg-base-100 rounded-box z-[300] w-52 p-2 shadow">
+						</button>
+						<ul class="dropdown-content menu bg-base-100 rounded-box w-52 p-2 shadow">
 							<li><button on:click={() => changeSortOrder('alphabetical')}>Alphabetical</button></li>
 							<li><button on:click={() => changeSortOrder('createdAt')}>Created At</button></li>
 						</ul>
 					</div>
 				</div>
 
-				<!-- Search Input (Ensuring visibility and proper styling) -->
-				<div class="flex items-center bg-white py-2 px-4 rounded-[24px] w-full sm:w-auto">
-          <span aria-hidden="true" class="inline-flex items-center justify-center" role="img">
+				<!-- Search Input -->
+				<div class="flex items-center bg-white h-12 px-4 rounded-md w-full sm:w-auto">
+        <span aria-hidden="true" class="inline-flex items-center justify-center" role="img">
             <svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24">
-              <path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"></path>
+                <path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"></path>
             </svg>
-          </span>
-					<input placeholder="Search" class="ml-4 pr-4 pl-4 focus:outline-none w-full sm:w-auto">
+        </span>
+					<input placeholder="Search" class="ml-2 pr-4 pl-4 focus:outline-none w-full sm:w-auto text-sm">
 				</div>
 
-				<!-- Spacer -->
+				<!-- Spacer to push the last button to the right -->
 				<div class="ml-auto"></div>
 
-				<!-- Right Section Buttons -->
-				<div class="flex space-x-2 justify-between sm:justify-start">
-					<!-- Transcriptions Button -->
-					<div>
-						<a href="/AddTranscription">
-						<button class="btn btn-primary flex items-center text-black font-semibold py-4 px-8 rounded-full sm:w-auto">
+				<!-- Transcriptions Button -->
+				<div>
+					<a href="/AddTranscription">
+						<button class="btn btn-primary h-12 px-8 text-black font-semibold rounded-md flex items-center">
 							Transcriptions
 						</button>
-						</a>
-					</div>
+					</a>
 				</div>
 			</div>
 

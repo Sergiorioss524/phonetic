@@ -200,7 +200,7 @@
 	$: hasTwoOrMoreSelected = $transcriptionStore.filter(segment => segment.selected).length >= 2;
 </script>
 
-<section class="px-10 py-16">
+<section class="min-h-screen flex flex-col px-10 pt-16">
 	<div class="container mx-auto max-w-full lg:max-w-8xl xl:max-w-9xl bg-white shadow-md rounded-lg p-8">
 		<!-- Header Section -->
 		<h1 class="text-4xl font-bold text-gray-800 mb-6">Transcripción Completa</h1>
