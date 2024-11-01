@@ -201,39 +201,37 @@
 </script>
 
 <section class="px-10 py-16">
-	<div class="container mx-auto max-w-7xl bg-white shadow-md rounded-lg p-8">
+	<div class="container mx-auto max-w-full lg:max-w-8xl xl:max-w-9xl bg-white shadow-md rounded-lg p-8">
 		<!-- Header Section -->
 		<h1 class="text-4xl font-bold text-gray-800 mb-6">Transcripción Completa</h1>
 		<div class="flex justify-between mb-6">
 			<!-- Main Buttons -->
 			<div class="flex flex-wrap gap-2">
-				<button class="btn btn-secondary flex items-center px-4 py-2 rounded-md text-sm" on:click={openRenameModal}>
-					<Fa icon={faUserEdit} class="mr-2 h-4 w-4" />
-					Renombrar interlocutores
-				</button>
-				<button class="btn btn-secondary flex items-center px-4 py-2 rounded-md text-sm">
-					<Fa icon={faDownload} class="mr-2 h-4 w-4" />
-					Descargar Audio
-				</button>
-				<button class="btn btn-secondary flex items-center px-4 py-2 rounded-md text-sm">
+				<button class="btn btn-secondary flex items-center px-4 py-1 h-8 rounded-md text-sm">
 					<Fa icon={faEdit} class="mr-2 h-4 w-4" />
 					Renombrar transcripción
 				</button>
-				<button class="btn btn-secondary flex items-center px-4 py-2 rounded-md text-sm">
+				<button class="btn btn-secondary flex items-center px-4 py-1 h-8 rounded-md text-sm" on:click={openRenameModal}>
+					<Fa icon={faUserEdit} class="mr-2 h-4 w-4" />
+					Renombrar interlocutores
+				</button>
+				<button class="btn btn-secondary flex items-center px-4 py-1 h-8 rounded-md text-sm">
+					<Fa icon={faDownload} class="mr-2 h-4 w-4" />
+					Descargar Audio
+				</button>
+
+				<button class="btn btn-secondary flex items-center px-4 py-1 h-8 rounded-md text-sm">
 					<Fa icon={faFileAlt} class="mr-2 h-4 w-4" />
 					Descargar Transcripción
 				</button>
 				{#if hasTwoOrMoreSelected}
-					<button class="btn btn-secondary flex items-center px-4 py-2 rounded-md text-sm" on:click={openCombineModal}>
+					<button class="btn btn-secondary flex items-center px-4 py-1 h-8 rounded-md text-sm" on:click={openCombineModal}>
 						<Fa icon={faObjectGroup} class="mr-2 h-4 w-4" />
 						Combinar segmentos seleccionados
 					</button>
 				{/if}
 			</div>
 		</div>
-
-
-
 		<!-- Transcription Table -->
 		<div class="overflow-x-auto border border-gray-200 rounded-lg">
 			<table class="min-w-full table-auto">
@@ -258,7 +256,7 @@
 							<div class="flex items-center space-x-3">
 								<!-- Custom Play Button with Duration -->
 								<button
-									class="flex items-center justify-center bg-gray-200 text-black rounded-full px-4 py-2 cursor-pointer"
+									class="flex items-center justify-center bg-gray-200 text-black rounded-md px-4 py-2 cursor-pointer"
 									style="font-family: 'Courier New', monospace; font-size: 1rem;"
 								>
 									<!-- Play Icon and Time Text -->
@@ -376,7 +374,6 @@
 			</div>
 		{/if}
 
-		<!-- Combine Segments Modal -->
 		<!-- Combine Segments Modal -->
 		{#if showCombineModal}
 			<div class="fixed inset-0 flex items-center justify-center z-50">
