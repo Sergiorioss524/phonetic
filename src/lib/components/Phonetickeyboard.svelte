@@ -4,7 +4,6 @@
 
 	const phoneticSymbols = [
 		'ə', 'θ', 'ɪ', 'ʊ', 'ɔ', 'æ', 'ʌ', 'ɒ', 'ŋ', 'ʃ', 'ʒ', 'ɡ', 'ɑ', 'eɪ', 'aɪ', 'oʊ', 'ɔɪ', 'p', 'b'
-		// Add more symbols as needed
 	];
 </script>
 
