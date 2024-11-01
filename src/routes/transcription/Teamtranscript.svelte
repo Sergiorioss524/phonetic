@@ -22,7 +22,6 @@
 			<th class="p-4 text-gray-600 font-semibold text-left">Name</th>
 			<th class="p-4 text-gray-600 font-semibold text-center">Creator</th>
 			<th class="p-4 text-gray-600 font-semibold text-center">Created at</th>
-			<th class="p-4 text-gray-600 font-semibold text-center">Transcription</th>
 			<th class="p-4 text-gray-600 font-semibold text-center rounded-tr-[24px]">Actions</th>
 		</tr>
 		</thead>
@@ -35,7 +34,6 @@
 			<td class="p-4 text-left">Cy Ganderton</td>
 			<td class="p-4 text-center">John Doe</td>
 			<td class="p-4 text-center">2023-10-31</td>
-			<td class="p-4 text-center">Completed</td>
 			<td class="px-7 py-4">
 				<div class="flex space-x-2 justify-center">
 					<!-- Tooltip-enabled buttons with consistent styling -->
@@ -84,7 +82,6 @@
 			<td class="p-4 text-left">Hart Hagerty</td>
 			<td class="p-4 text-center">Jane Smith</td>
 			<td class="p-4 text-center">2023-10-30</td>
-			<td class="p-4 text-center">In Progress</td>
 			<td class="px-7 py-4">
 				<div class="flex space-x-2 justify-center">
 					<!-- Tooltip-enabled buttons with consistent styling -->

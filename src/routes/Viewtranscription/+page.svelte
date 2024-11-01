@@ -3,6 +3,8 @@
 	import { faEye, faUndo, faCut, faCompressArrowsAlt, faTrashAlt, faCheck } from '@fortawesome/free-solid-svg-icons';
 	import Fa from 'svelte-fa';
 	import { faUserEdit, faDownload, faEdit, faFileAlt, faObjectGroup } from '@fortawesome/free-solid-svg-icons';
+	import Phonetickeyboard from '$lib/components/Phonetickeyboard.svelte';
+	import { onMount, onDestroy } from 'svelte';
 
 	interface Transcription {
 		speaker: string;
@@ -37,19 +39,24 @@
 	let showCombineModal = false;
 
 	// Array to store the segments selected for combining
-	let segmentsToCombine = [];
+	let segmentsToCombine: Transcription[] = [];
 
 	// Variable to control the visibility of the divide modal
 	let showDivideModal = false;
 
 	// Variable to store the segment to be divided
-	let segmentToDivide = null;
+	let segmentToDivide: Transcription | null = null;
 
 	// Temporary variable to hold the text being edited for division
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let divideText = '';
 
 	// Variable to hold the selected speaker for the new segment
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let selectedSpeakerForDivide = '';
+
+	let showPhoneticKeyboard: { [key: number]: boolean } = {};
+
 
 	// Function to open the rename modal
 	function openRenameModal() {
@@ -161,12 +168,6 @@
 		closeDivideModal();
 	}
 
-	// Function to handle speaker changes in dropdown in divide modal
-	function handleSpeakerChangeForDivide(event: Event) {
-		const target = event.target as HTMLSelectElement;
-		selectedSpeakerForDivide = target.value;
-	}
-
 	// Function to handle speaker changes in dropdown
 	function changeSpeaker(index: number, value: string) {
 		transcriptionStore.update((transcriptions) => {
@@ -198,6 +199,54 @@
 
 	// Computed property to check if two or more segments are selected
 	$: hasTwoOrMoreSelected = $transcriptionStore.filter(segment => segment.selected).length >= 2;
+
+
+	function showKeyboard(index: number) {
+		showPhoneticKeyboard = { ...showPhoneticKeyboard, [index]: true };
+	}
+
+	function handleInsert(event:CustomEvent<string>, index:number ) {
+		const symbol = event.detail;
+		transcriptionStore.update(transcriptions => {
+			const segment = transcriptions[index];
+			const textarea = document.getElementById(`textarea-${index}`) as HTMLTextAreaElement;
+			if (textarea) {
+				const start = textarea.selectionStart;
+				const end = textarea.selectionEnd;
+				const text = segment.text;
+
+				// Insert the symbol at the cursor position
+				segment.text = text.substring(0, start) + symbol + text.substring(end);
+
+				// Update the cursor position
+				const newPosition = start + symbol.length;
+				setTimeout(() => {
+					textarea.focus();
+					textarea.selectionStart = textarea.selectionEnd = newPosition;
+				}, 0);
+			}
+			return transcriptions;
+		});
+	}
+
+	function handleDocumentClick(event: MouseEvent) {
+		// Cast event.target to HTMLElement
+		const target = event.target as HTMLElement;
+
+		// Check if the target exists and is an HTMLElement
+		if (target && !target.closest('.phonetic-keyboard') && !target.closest('textarea')) {
+			showPhoneticKeyboard = {};
+		}
+	}
+
+
+	onMount(() => {
+		document.addEventListener('click', handleDocumentClick);
+	});
+
+	onDestroy(() => {
+		document.removeEventListener('click', handleDocumentClick);
+	});
 </script>
 
 <section class="min-h-screen flex flex-col px-10 pt-16">
@@ -207,26 +256,26 @@
 		<div class="flex justify-between mb-6">
 			<!-- Main Buttons -->
 			<div class="flex flex-wrap gap-2">
-				<button class="btn btn-secondary flex items-center px-4 py-1 h-8 rounded-md text-sm">
-					<Fa icon={faEdit} class="mr-2 h-4 w-4" />
+				<button class="btn btn-sm btn-secondary flex items-center rounded-md">
+					<Fa icon={faEdit} class="mr-2 h-5 w-5" />
 					Renombrar transcripción
 				</button>
-				<button class="btn btn-secondary flex items-center px-4 py-1 h-8 rounded-md text-sm" on:click={openRenameModal}>
+				<button class="btn btn-sm btn-secondary flex items-center rounded-md" on:click={openRenameModal}>
 					<Fa icon={faUserEdit} class="mr-2 h-4 w-4" />
 					Renombrar interlocutores
 				</button>
-				<button class="btn btn-secondary flex items-center px-4 py-1 h-8 rounded-md text-sm">
-					<Fa icon={faDownload} class="mr-2 h-4 w-4" />
+				<button class="btn btn-sm btn-secondary flex items-center rounded-md ">
+					<Fa icon={faDownload} class="mr-2 h-5 w-5" />
 					Descargar Audio
 				</button>
 
-				<button class="btn btn-secondary flex items-center px-4 py-1 h-8 rounded-md text-sm">
-					<Fa icon={faFileAlt} class="mr-2 h-4 w-4" />
+				<button class="btn btn-sm btn-secondary flex items-center rounded-md ">
+					<Fa icon={faFileAlt} class="mr-2 h-5 w-5" />
 					Descargar Transcripción
 				</button>
 				{#if hasTwoOrMoreSelected}
-					<button class="btn btn-secondary flex items-center px-4 py-1 h-8 rounded-md text-sm" on:click={openCombineModal}>
-						<Fa icon={faObjectGroup} class="mr-2 h-4 w-4" />
+					<button class="btn btn-sm btn-secondary flex items-center rounded-md" on:click={openCombineModal}>
+						<Fa icon={faObjectGroup} class="mr-2 h-5 w-5" />
 						Combinar segmentos seleccionados
 					</button>
 				{/if}
@@ -246,14 +295,19 @@
 				{#each $transcriptionStore as segment, index}
 					<tr class="{segment.selected ? 'bg-gray-200' : ''}">
 						<td class="px-4 py-4 text-sm font-medium text-gray-800">
-							<!-- Dropdown to select speaker -->
-							<select on:change={(e) => handleSelectChange(index, e)} class="border rounded-lg px-2 py-1">
+							<!-- Dropdown to select speaker with custom arrow -->
+							<select
+								on:change={(e) => handleSelectChange(index, e)}
+								class="border rounded-lg px-6 py-4 cursor-pointer appearance-none pr-8"
+								style="background: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2220%22 height=%2220%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23333%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><polyline points=%226 9 12 15 18 9%22></polyline></svg>') no-repeat right 0.75rem center; background-size: 1rem;"
+							>
 								<option value="SPEAKER_00" selected={segment.speaker === 'SPEAKER_00'}>{$speakerName1}</option>
 								<option value="SPEAKER_01" selected={segment.speaker === 'SPEAKER_01'}>{$speakerName2}</option>
 							</select>
 						</td>
+
 						<td class="px-4 py-4">
-							<div class="flex items-center space-x-3">
+							<div class="flex items-start space-x-3 relative">
 								<!-- Custom Play Button with Duration -->
 								<button
 									class="flex items-center justify-center bg-gray-200 text-black rounded-md px-4 py-2 cursor-pointer"
@@ -265,13 +319,23 @@
 								</button>
 
 								<!-- Text Area for Transcription -->
-								<textarea
-									class="w-full px-3 py-2 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
-									bind:value={segment.text}
-									rows="1"
-									style="overflow:hidden;"
-									on:input={autoResize}
-								></textarea>
+								<div class="relative w-full">
+  <textarea
+		id="textarea-{index}"
+		class="w-full px-3 py-2 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
+		bind:value={segment.text}
+		rows="1"
+		style="overflow:hidden;"
+		on:input={autoResize}
+		on:focus={() => showKeyboard(index)}
+	></textarea>
+
+									{#if showPhoneticKeyboard[index]}
+										<div class="absolute top-full mt-2 left-0 z-50">
+											<Phonetickeyboard on:insert={(e) => handleInsert(e, index)} />
+										</div>
+									{/if}
+								</div>
 							</div>
 						</td>
 						<td class="px-7 py-4">
@@ -283,36 +347,36 @@
 								>
 									<Fa icon={segment.revised ? faCheck : faEye} class="h-5 w-5" />
 									<span class="absolute left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
-                                        {segment.revised ? 'Marcar para revisar' : 'Validar transcripcion'}
-                                    </span>
+										{segment.revised ? 'Marcar para revisar' : 'Validar transcripcion'}
+									</span>
 								</button>
 
 								<button class="btn btn-sm btn-secondary relative group" on:click={() => handleAction('Revertir', index)}>
 									<Fa icon={faUndo} class="h-5 w-5" />
 									<span class="absolute z-50 left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
-                                        Revertir
-                                    </span>
+										Revertir
+									</span>
 								</button>
 
 								<button class="btn btn-sm btn-warning relative group" on:click={() => handleAction('Dividir', index)}>
 									<Fa icon={faCut} class="h-5 w-5" />
 									<span class="absolute left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
-                                        Dividir
-                                    </span>
+										Dividir
+									</span>
 								</button>
 
 								<button class="btn btn-sm relative group {segment.selected ? 'btn-success' : 'btn-secondary'}" on:click={() => toggleSegmentSelection(index)}>
 									<Fa icon={faCompressArrowsAlt} class="h-5 w-5" />
 									<span class="absolute z-50 left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
-                                        {segment.selected ? 'Deseleccionar' : 'Seleccionar'}
-                                    </span>
+										{segment.selected ? 'Deseleccionar' : 'Seleccionar'}
+									</span>
 								</button>
 
 								<button class="btn btn-sm btn-danger relative group" on:click={() => handleAction('Eliminar', index)}>
 									<Fa icon={faTrashAlt} class="h-5 w-5" />
 									<span class="absolute left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
-                                        Eliminar
-                                    </span>
+										Eliminar
+									</span>
 								</button>
 							</div>
 						</td>
@@ -322,7 +386,8 @@
 			</table>
 		</div>
 
-		<!-- Rename Interlocutors Modal -->
+
+<!-- Rename Interlocutors Modal -->
 		{#if showRenameModal}
 			<div class="fixed inset-0 flex items-center justify-center z-50">
 				<div class="absolute inset-0 bg-black opacity-50"></div>
@@ -498,3 +563,4 @@
 		{/if}
 	</div>
 </section>
+
