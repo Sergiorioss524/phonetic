@@ -3,6 +3,12 @@
 	import Fa from 'svelte-fa';
 	import { writable } from 'svelte/store';
 	import Teamtranscript from '../Teamtranscript.svelte';
+	import {
+		faEdit,
+		faTrashAlt,
+		faDownload,
+		faFileAlt,
+	} from '@fortawesome/free-solid-svg-icons';
 
 	// Define the interface for file data
 	interface FileData {
@@ -143,73 +149,131 @@
 			<div class="mt-6 border border-gray-200 rounded-tl-[24px] rounded-tr-[24px] overflow-x-auto relative z-[0]">
 				<div class="relative overflow-x-auto">
 					<!-- Table Header -->
-					<table class="w-full table-auto">
-						<thead class="bg-gray-50">
+					<table class="w-full table-auto border border-gray-200 rounded-[24px] overflow-hidden">
+						<!-- Table Header -->
+						<thead class="bg-white rounded-t-[24px]">
 						<tr>
-							<!-- Rounded Checkbox Header -->
-							<th class="p-4 text-left">
+							<!-- Checkbox Header -->
+							<th class="p-4 text-left rounded-tl-[24px]">
 								<input type="checkbox" class="h-5 w-5 rounded-full border-gray-300 text-blue-600 focus:ring-blue-500">
 							</th>
-							<!-- Headers with proper alignment and spacing -->
 							<th class="p-4 text-gray-600 font-semibold text-left">Name</th>
-							<th class="p-4 text-gray-600 font-semibold text-center">Speakers</th>
 							<th class="p-4 text-gray-600 font-semibold text-center">Duration</th>
 							<th class="p-4 text-gray-600 font-semibold text-center">Created at</th>
-							<th class="p-4 text-gray-600 font-semibold text-center">Transcription</th>
+							<th class="p-4 text-gray-600 font-semibold text-center rounded-tr-[24px]">Actions</th>
 						</tr>
 						</thead>
 						<tbody class="bg-white">
-						<!-- Show files if any -->
-						{#each $filesData as file, index}
-							<tr class="hover:bg-gray-50">
-								<td class="p-4 text-left">
-									<input type="checkbox" class="h-5 w-5 rounded-full border-gray-300 text-blue-600 focus:ring-blue-500" on:change={() => handleCheckboxChange(index)}>
-								</td>
-								<td class="p-4 text-left">{file.name}</td>
-								<!-- Numeric Counter for Speakers -->
-								<td class="p-4 text-center">
-									<div class="flex items-center justify-center space-x-2">
-										<button class="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded" on:click={() => updateSpeakers(index, -1)}>-</button>
-										<input
-											type="text"
-											value={file.speakers}
-											readonly
-											class="w-12 text-center border border-gray-300 rounded p-1 focus:outline-none"
-										/>
-										<button class="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded" on:click={() => updateSpeakers(index, 1)}>+</button>
-									</div>
-								</td>
-								<td class="p-4 text-center">{file.duration}</td>
-								<td class="p-4 text-center">{file.createdAt}</td>
-								<td class="p-4 text-center">
-									<button
-										class={`px-2 py-1 rounded ${file.transcription ? 'bg-green-500' : 'bg-red-500'} text-white`}
-										on:click={() => toggleTranscription(index)}
-									>
-										{file.transcription ? 'Yes' : 'No'}
+						<!-- Row 1 -->
+						<tr class="hover:bg-gray-200 bg-gray-100">
+							<td class="p-4 text-left">
+								<input type="checkbox" class="h-5 w-5 rounded-full border-gray-300 text-blue-600 focus:ring-blue-500">
+							</td>
+							<td class="p-4 text-left">Cy Ganderton</td>
+							<td class="p-4 text-center">12:20</td>
+							<td class="p-4 text-center">2023-10-31</td>
+							<td class="px-7 py-4">
+								<div class="flex space-x-2 justify-center">
+									<!-- Tooltip-enabled buttons with consistent styling -->
+
+									<!-- View Button -->
+									<button class="btn btn-sm btn-secondary relative group">
+										<Fa icon={faEdit} class="h-5 w-5" />
+										<span class="absolute left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
+				Editar
+			</span>
 									</button>
-								</td>
-							</tr>
-						{/each}
 
-						<!-- No records found row -->
-						{#if $filesData.length === 0}
-							<tr>
-								<td colspan="6" class="p-4 text-left bg-gray-100 text-gray-600 hover:bg-zinc-200">
-									No records found
-								</td>
-							</tr>
-						{/if}
+									<!-- Revert Button -->
+									<button class="btn btn-sm btn-secondary relative group">
+										<Fa icon={faTrashAlt} class="h-5 w-5" />
+										<span class="absolute z-50 left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
+				Eliminar
+			</span>
+									</button>
+
+									<!-- Divide Button -->
+									<button class="btn btn-sm btn-warning relative group">
+										<Fa icon={faDownload} class="h-5 w-5" />
+										<span class="absolute left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
+				Descargar Audio
+			</span>
+									</button>
+
+									<!-- Select/Deselect Button -->
+									<button class="btn btn-sm btn-secondary relative group">
+										<Fa icon={faFileAlt} class="h-5 w-5" />
+										<span class="absolute z-50 left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
+				Descargar Transcripcion
+			</span>
+									</button>
+								</div>
+							</td>
+
+						</tr>
+
+						<!-- Row 2 -->
+						<tr class="hover:bg-gray-200 bg-gray-100">
+							<td class="p-4 text-left">
+								<input type="checkbox" class="h-5 w-5 rounded-md border-gray-300 text-blue-600 focus:ring-blue-500">
+							</td>
+							<td class="p-4 text-left">Hart Hagerty</td>
+							<td class="p-4 text-center">17:30</td>
+							<td class="p-4 text-center">2023-10-30</td>
+							<td class="px-7 py-4">
+								<div class="flex space-x-2 justify-center">
+									<!-- Tooltip-enabled buttons with consistent styling -->
+
+									<!-- View Button -->
+									<button class="btn btn-sm btn-secondary relative group">
+										<Fa icon={faEdit} class="h-5 w-5" />
+										<span class="absolute left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
+				Editar
+			</span>
+									</button>
+
+									<!-- Revert Button -->
+									<button class="btn btn-sm btn-secondary relative group">
+										<Fa icon={faTrashAlt} class="h-5 w-5" />
+										<span class="absolute z-50 left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
+				Eliminar
+			</span>
+									</button>
+
+									<!-- Divide Button -->
+									<button class="btn btn-sm btn-warning relative group">
+										<Fa icon={faDownload} class="h-5 w-5" />
+										<span class="absolute left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
+				Descargar Audio
+			</span>
+									</button>
+
+									<!-- Select/Deselect Button -->
+									<button class="btn btn-sm btn-secondary relative group">
+										<Fa icon={faFileAlt} class="h-5 w-5" />
+										<span class="absolute z-50 left-0 transform -translate-y-full bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100">
+				Descargar Transcripcion
+			</span>
+									</button>
+								</div>
+							</td>
+						</tr>
+
 						</tbody>
+						<tfoot>
+						<tr>
+							<td colspan="6">
+								<div class="flex items-center justify-between bg-white p-4 border-t border-gray-200 rounded-bl-[24px] rounded-br-[24px]">
+									<p class="text-xs sm:text-sm text-gray-600">1 - 10 of 0 items</p>
+									<div class="flex items-center space-x-2">
+										<button class="px-3 py-1 rounded-full border text-blue-500">1</button>
+										<!-- Additional page buttons as needed -->
+									</div>
+								</div>
+							</td>
+						</tr>
+						</tfoot>
 					</table>
-
-					<!-- Pagination (Static example) -->
-					<div class="flex items-center justify-between bg-white p-4 border-t border-gray-200 rounded-bl-[24px] rounded-br-[24px]">
-						<p class="text-xs sm:text-sm text-gray-600">1 - 10 of {$filesData.length} items</p>
-						<div class="flex items-center space-x-2">
-							<button class="px-3 py-1 rounded-full border text-blue-500">1</button>
-						</div>
-					</div>
 				</div>
 			</div>
 		</div>
@@ -217,7 +281,6 @@
 </section>
 
 <section class="mt-24">
-	<!-- Stylish Heading -->
 	<h2 class="text-4xl font-bold text-gray-800 mb-12 text-left ml-24">
 		Transcripciones del equipo
 	</h2>
