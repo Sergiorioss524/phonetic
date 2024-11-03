@@ -295,22 +295,22 @@
 				{#each $transcriptionStore as segment, index}
 					<tr class="{segment.selected ? 'bg-gray-200' : ''}">
 						<td class="px-4 py-4 text-sm font-medium text-gray-800">
-							<!-- Dropdown to select speaker with custom arrow -->
 							<select
 								on:change={(e) => handleSelectChange(index, e)}
-								class="border rounded-lg px-6 py-4 cursor-pointer appearance-none pr-8"
+								class="border rounded-lg px-6 py-1 cursor-pointer appearance-none pr-8 h-10"
 								style="background: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2220%22 height=%2220%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23333%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><polyline points=%226 9 12 15 18 9%22></polyline></svg>') no-repeat right 0.75rem center; background-size: 1rem;"
 							>
 								<option value="SPEAKER_00" selected={segment.speaker === 'SPEAKER_00'}>{$speakerName1}</option>
 								<option value="SPEAKER_01" selected={segment.speaker === 'SPEAKER_01'}>{$speakerName2}</option>
 							</select>
+
 						</td>
 
 						<td class="px-4 py-4">
 							<div class="flex items-start space-x-3 relative">
 								<!-- Custom Play Button with Duration -->
 								<button
-									class="flex items-center justify-center bg-gray-200 text-black rounded-md px-4 py-2 cursor-pointer"
+									class="flex items-center justify-center bg-gray-200 text-black rounded-md px-4 py-2 cursor-pointer h-9"
 									style="font-family: 'Courier New', monospace; font-size: 1rem;"
 								>
 									<!-- Play Icon and Time Text -->
@@ -322,7 +322,7 @@
 								<div class="relative w-full">
   <textarea
 		id="textarea-{index}"
-		class="w-full px-3 py-2 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
+		class="w-full px-3 py-2 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500 h-9"
 		bind:value={segment.text}
 		rows="1"
 		style="overflow:hidden;"
@@ -339,7 +339,7 @@
 							</div>
 						</td>
 						<td class="px-7 py-4">
-							<div class="flex space-x-2 justify-center">
+							<div class="flex space-x-2 justify-center mb-2">
 								<!-- Tooltip-enabled buttons -->
 								<button
 									class="btn btn-sm relative group {segment.revised ? 'btn-success' : 'btn-secondary'}"
